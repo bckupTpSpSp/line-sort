@@ -432,6 +432,36 @@ TEST_CASE("Options")
 	}
 }
 
+TEST_CASE("Operators")
+{
+	SECTION("less - case sensitive - w/ empty")
+	{
+		REQUIRE_FALSE(Operators::Sensitive()("a", ""));
+		REQUIRE_FALSE(Operators::Sensitive()("A", ""));
+		REQUIRE(Operators::Sensitive()("", "a"));
+	}
+
+	SECTION("less - case sensitive - single char")
+	{
+		REQUIRE_FALSE(Operators::Sensitive()("a", "a"));
+		REQUIRE_FALSE(Operators::Sensitive()("a", "A"));
+		REQUIRE(Operators::Sensitive()("A", "a"));
+	}
+
+	SECTION("less - case insensitive - w/ empty")
+	{
+		REQUIRE_FALSE(Operators::Sensitive()("a", ""));
+		REQUIRE_FALSE(Operators::Sensitive()("A", ""));
+		REQUIRE(Operators::Sensitive()("", "a"));
+	}
+
+	SECTION("less - case insensitive - single char")
+	{
+		REQUIRE_FALSE(Operators::NoCase()("a", "a"));
+		REQUIRE_FALSE(Operators::NoCase()("a", "A"));
+		REQUIRE_FALSE(Operators::NoCase()("A", "a"));
+	}
+}
 namespace
 {
 	namespace data
@@ -493,6 +523,10 @@ TEST_CASE("Sorting")
 		output.str("");
 		REQUIRE(sort::process(Order::ascending, Filter::all, Case::sensitive, data::mixed(), output) == true);
 		REQUIRE(output.str() == "\n \nAa\nAz\nB\nD\nE\nFx\nG\naZ\nc\nf\n");
+
+		output.str("");
+		REQUIRE(sort::process(Order::ascending, Filter::all | Filter::nowhite, Case::sensitive, data::mixed(), output) == true);
+		REQUIRE(output.str() == "Aa\nAz\nB\nD\nE\nFx\nG\naZ\nc\nf\n");
 	}
 
 	SECTION("ascending - unique")
@@ -517,6 +551,10 @@ TEST_CASE("Sorting")
 		output.str("");
 		REQUIRE(sort::process(Order::ascending, Filter::unique, Case::sensitive, data::mixed(), output) == true);
 		REQUIRE(output.str() == "\n \nAa\nAz\nB\nD\nE\nFx\nG\naZ\nc\nf\n");
+
+		output.str("");
+		REQUIRE(sort::process(Order::ascending, Filter::unique | Filter::nowhite, Case::sensitive, data::mixed(), output) == true);
+		REQUIRE(output.str() == "Aa\nAz\nB\nD\nE\nFx\nG\naZ\nc\nf\n");
 	}
 
 	SECTION("ascending - ignore case")
@@ -541,6 +579,10 @@ TEST_CASE("Sorting")
 		output.str("");
 		REQUIRE(sort::process(Order::ascending, Filter::all, Case::ignore, data::mixed(), output) == true);
 		REQUIRE(output.str() == "\n \nAa\naZ\nAz\nB\nc\nD\nE\nf\nFx\nG\n");
+
+		output.str("");
+		REQUIRE(sort::process(Order::ascending, Filter::all | Filter::nowhite, Case::ignore, data::mixed(), output) == true);
+		REQUIRE(output.str() == "Aa\naZ\nAz\nB\nc\nD\nE\nf\nFx\nG\n");
 	}
 
 	SECTION("ascending - unique - ignore case")
@@ -565,6 +607,10 @@ TEST_CASE("Sorting")
 		output.str("");
 		REQUIRE(sort::process(Order::ascending, Filter::unique, Case::ignore, data::mixed(), output) == true);
 		REQUIRE(output.str() == "\n \nAa\naZ\nB\nc\nD\nE\nf\nFx\nG\n");
+
+		output.str("");
+		REQUIRE(sort::process(Order::ascending, Filter::unique | Filter::nowhite, Case::ignore, data::mixed(), output) == true);
+		REQUIRE(output.str() == "Aa\naZ\nB\nc\nD\nE\nf\nFx\nG\n");
 	}
 
 	SECTION("descending")
@@ -589,6 +635,10 @@ TEST_CASE("Sorting")
 		output.str("");
 		REQUIRE(sort::process(Order::descending, Filter::all, Case::sensitive, data::mixed(), output) == true);
 		REQUIRE(output.str() == "f\nc\naZ\nG\nFx\nE\nD\nB\nAz\nAa\n \n\n");
+
+		output.str("");
+		REQUIRE(sort::process(Order::descending, Filter::all | Filter::nowhite, Case::sensitive, data::mixed(), output) == true);
+		REQUIRE(output.str() == "f\nc\naZ\nG\nFx\nE\nD\nB\nAz\nAa\n");
 	}
 
 	SECTION("descending - ignore case")
@@ -613,6 +663,10 @@ TEST_CASE("Sorting")
 		output.str("");
 		REQUIRE(sort::process(Order::descending, Filter::all, Case::ignore, data::mixed(), output) == true);
 		REQUIRE(output.str() == "G\nFx\nf\nE\nD\nc\nB\naZ\nAz\nAa\n \n\n");
+
+		output.str("");
+		REQUIRE(sort::process(Order::descending, Filter::all | Filter::nowhite, Case::ignore, data::mixed(), output) == true);
+		REQUIRE(output.str() == "G\nFx\nf\nE\nD\nc\nB\naZ\nAz\nAa\n");
 	}
 
 	SECTION("descending - unique")
@@ -637,6 +691,10 @@ TEST_CASE("Sorting")
 		output.str("");
 		REQUIRE(sort::process(Order::descending, Filter::unique, Case::sensitive, data::mixed(), output) == true);
 		REQUIRE(output.str() == "f\nc\naZ\nG\nFx\nE\nD\nB\nAz\nAa\n \n\n");
+
+		output.str("");
+		REQUIRE(sort::process(Order::descending, Filter::unique | Filter::nowhite, Case::sensitive, data::mixed(), output) == true);
+		REQUIRE(output.str() == "f\nc\naZ\nG\nFx\nE\nD\nB\nAz\nAa\n");
 	}
 
 	SECTION("descending - unique - ignore case")
@@ -661,6 +719,10 @@ TEST_CASE("Sorting")
 		output.str("");
 		REQUIRE(sort::process(Order::descending, Filter::unique, Case::ignore, data::mixed(), output) == true);
 		REQUIRE(output.str() == "G\nFx\nf\nE\nD\nc\nB\naZ\nAa\n \n\n");
+
+		output.str("");
+		REQUIRE(sort::process(Order::descending, Filter::unique | Filter::nowhite, Case::ignore, data::mixed(), output) == true);
+		REQUIRE(output.str() == "G\nFx\nf\nE\nD\nc\nB\naZ\nAa\n");
 	}
 }
 
